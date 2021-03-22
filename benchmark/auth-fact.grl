@@ -1,0 +1,24 @@
+rule AuthReqNos "auth_request_response_or_send_to_remote_nos" salience 10 {
+    when
+        facts.IsAuth == false || facts.Target == "NOS"
+    then
+        facts.Types = facts.GetType("Handle_List");
+        facts.Handlers = facts.GetHandler(facts.Handlers,"remote_resp_check","send_to_nos");
+        Retract("AuthReqNos");
+}
+rule NetReqMsg "gns_issuer_net_req_msg" salience 10 {
+    when
+        facts.IsNetworking == true && facts.IsRequestMsg == true
+    then
+        facts.Types = facts.GetType("seq");
+        facts.Name = facts.GetName("gns_issuer_incoming_network_handler_seq");
+        Retract("NetReqMsg");
+}
+rule RespMsg "netm_response_msg" salience 10 {
+    when
+        facts.IsNetworking == true && facts.IsRequestMsg == false
+    then
+        facts.Types = facts.GetType("seq");
+        facts.Name = facts.GetName("send_notification_to_csm");
+        Retract("RespMsg");
+}
