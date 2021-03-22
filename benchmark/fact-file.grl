@@ -1,0 +1,7 @@
+rule ReversalCurrent "Accept reversal from current batch" salience 10{
+    when
+        facts.IsReversal == true
+    then
+        facts.Action = facts.GetAction("check if already reversed");
+        Retract("ReversalCurrent");
+}
