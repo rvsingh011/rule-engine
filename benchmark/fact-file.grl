@@ -5,3 +5,24 @@ rule ReversalCurrent "Accept reversal from current batch" salience 10{
         facts.Action = facts.GetAction("check if already reversed");
         Retract("ReversalCurrent");
 }
+rule AlreadyReversedT "Reversal already done" salience 10{
+    when
+        facts.AlreadyReversed == true
+    then
+        facts.Action = facts.GetAction("Do nothing Already Reversal Is true");
+        Retract("AlreadyReversedT");
+}
+rule AlreadyReversedF "Reversal already done" salience 10{
+    when
+        facts.AlreadyReversed == false
+    then
+        facts.Action = facts.GetAction("Check in current batch and set IsCurrentBatch");
+        Retract("AlreadyReversedF");
+}
+rule CheckCurrentBatch "Checking in current batch" salience 10{
+    when
+        facts.IsCurrentBatch == true
+    then
+        facts.Action = facts.GetAction("accept in current batch");
+        Retract("CheckCurrentBatch");
+}
