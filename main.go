@@ -17,61 +17,53 @@ type MyFact struct {
 	FloatAttribute   float64
 	TimeAttribute    time.Time
 	WhatToSay        string
-	Code             string
 }
 
 func (mf *MyFact) GetWhatToSay(sentence string) string {
 	return fmt.Sprintf("Let say \"%s\"", sentence)
 }
 
-func (mf *MyFact) SetCode(code string) {
-	mf.Code = code
-	fmt.Println(mf.Code)
+func (mf *MyFact) SetIntAttribute(value int64) {
+	mf.IntAttribute = value
 }
 
-func (mf *MyFact) GetCode() string {
-	return mf.Code
-}
+func (mf *MyFact) Execute(value string) {
+	fmt.Println("Executed this rule", value)
 
-func (mf *MyFact) Print(value string) {
-	fmt.Println(value)
-	fmt.Println("Code", mf.Code)
 }
 
 func main() {
+
 	// lets prepare a rule definition
 	drls := `
-rule checkValue1 "Check the default values" salience 98 {
-	when 
-		MF.GetCode() == "100"
-	then
-		MF.SetCode("200");
-		MF.Print("checkValue1");
-		Retract("checkValue1");
-}
-
-rule CheckCode "Check the default values" salience 99 {
-	when 
-		MF.Code == "000"
-	then
-		MF.SetCode("100");
-		MF.Print("CheckCode");
-		Retract("CheckCode");
-}
-
-
-rule CheckValues "Check the default values" salience 100 {
+rule CheckValues "Check the default values" salience 10 {
     when 
         MF.IntAttribute == 123 && MF.StringAttribute == "Some string value"
     then
-		MF.Print("ChekValue");
-		MF.SetCode("000");
-		MF.Print("ChekValue");
+		MF.Execute("CheckValues");
+        MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
+		MF.SetIntAttribute(567);
         Retract("CheckValues");
 }
 
-`
+rule CheckValues1 "Check the default values" salience 9 {
+    when 
+		MF.IntAttribute == 567 && MF.StringAttribute == "Some string value"
+    then
+		MF.Execute("CheckValues1");
+        MF.WhatToSay = MF.GetWhatToSay("PQRS");
+        Retract("CheckValues1");
+}
 
+rule CheckValues2 "Check the default values" salience 8 {
+    when 
+		MF.IntAttribute == 123 && MF.StringAttribute == "Some string value"
+    then
+		MF.Execute("CheckValues2");
+        MF.WhatToSay = MF.GetWhatToSay("QWERTY");
+        Retract("CheckValues2");
+}
+`
 	myFact := &MyFact{
 		IntAttribute:     123,
 		StringAttribute:  "Some string value",
@@ -103,7 +95,7 @@ rule CheckValues "Check the default values" salience 100 {
 		panic(err)
 	}
 
-	fmt.Println("Final Print", myFact.Code)
+	fmt.Println("Final Print", myFact.WhatToSay)
 	// this should prints
 	// Lets Say "Hello Grule"
 }
