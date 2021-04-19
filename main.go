@@ -43,7 +43,9 @@ rule CheckValues "Check the default values" salience 10 {
 		MF.Execute("CheckValues");
         MF.WhatToSay = MF.GetWhatToSay("Hello Grule");
 		MF.SetIntAttribute(567);
+		Changed("MF.IntAttribute");
         Retract("CheckValues");
+
 }
 
 rule CheckValues1 "Check the default values" salience 9 {
@@ -51,7 +53,9 @@ rule CheckValues1 "Check the default values" salience 9 {
 		MF.IntAttribute == 567 && MF.StringAttribute == "Some string value"
     then
 		MF.Execute("CheckValues1");
+		MF.SetIntAttribute(123);
         MF.WhatToSay = MF.GetWhatToSay("PQRS");
+		Changed("MF.IntAttribute");
         Retract("CheckValues1");
 }
 
